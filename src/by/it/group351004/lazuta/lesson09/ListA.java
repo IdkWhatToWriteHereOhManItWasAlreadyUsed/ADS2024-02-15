@@ -1,4 +1,4 @@
-package by.it.group351004.lazuta.lesson09;
+package lesson09;
 
 import java.util.Collection;
 import java.util.Iterator;
