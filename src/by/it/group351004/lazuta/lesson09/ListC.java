@@ -1,9 +1,6 @@
-package by.it.group351004.lazuta.lesson09;
+package lesson09;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class ListC<E> implements List<E> {
 
@@ -12,97 +9,182 @@ public class ListC<E> implements List<E> {
     /////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
     //////               Обязательные к реализации методы             ///////
-
+    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
+    private E[] elements= (E[]) new Object[]{};
+    private int size=0;
     @Override
     public String toString() {
-        return "";
+        StringBuilder stringBuilder = new StringBuilder("[");
+        String delimiter="";
+        for (int i=0;i<size;i++){
+            stringBuilder.append(delimiter).append(elements[i]);
+            delimiter=", ";
+        }
+        stringBuilder.append("]");
+        return stringBuilder.toString();
     }
 
     @Override
     public boolean add(E e) {
-        return false;
+        if (size==elements.length)
+            elements= Arrays.copyOf(elements, (size * 3)/2+1);
+        elements[size++]=e;
+        return true;
     }
 
     @Override
     public E remove(int index) {
-        return null;
+        E delete=elements[index];
+        System.arraycopy(elements,index+1,elements,index,size-1-index);
+        size--;
+        return delete;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public void add(int index, E element) {
-
+        if (size==elements.length)
+            elements= Arrays.copyOf(elements, (size * 3)/2+1);
+        System.arraycopy(elements,index,elements,index+1,size-index);
+        elements[index]=element;
+        size++;
     }
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        int index = indexOf(o);
+        if (index > -1)
+            remove(index);
+        return (index > -1);
     }
 
     @Override
     public E set(int index, E element) {
+        if (index>-1 && size>index) {
+            E el = elements[index];
+            elements[index] = element;
+            return el;
+        }
         return null;
     }
 
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return (size==0);
     }
 
 
     @Override
     public void clear() {
-
+        for(int i=0;i<size;i++){
+            elements[i]=null;
+        }
+        size=0;
     }
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        if (o == null){
+            for (int i = 0; i < size; i++) {
+                if (elements[i]==null)
+                    return i;
+            }
+        }else {
+            for (int i = 0; i < size; i++) {
+                if (o.equals(elements[i]))
+                    return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public E get(int index) {
-        return null;
+        return elements[index];
     }
 
     @Override
     public boolean contains(Object o) {
+        for(int i=0;i<size;i++){
+            if(elements[i].equals(o)){
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        int lastIndex=-1;
+        for(int i=0;i<size;i++){
+            if(elements[i].equals(o)){
+                lastIndex=i;
+            }
+        }
+        return lastIndex;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for(Object el:c){
+            if(!this.contains(el)){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        if(c.size()==0){
+            return false;
+        }
+        for(Object el:c){
+            this.add((E) el);
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        return false;
+        if(c.size()==0){
+            return false;
+        }
+        for(Object el:c){
+            this.add(index++,(E) el);
+        }
+        return true;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean changed=false;
+        for(Object el:c){
+            while (this.contains(el)){
+                this.remove((E) el);
+                changed=true;
+            }
+        }
+        return changed;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        boolean changed=false;
+        for(int i=size-1;i>-1;i--){
+            Object el=this.get(i);
+            if(!c.contains(el)){
+                this.remove(i);
+                changed=true;
+            }
+        }
+        return changed;
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -146,5 +228,6 @@ public class ListC<E> implements List<E> {
     public Iterator<E> iterator() {
         return null;
     }
+
 
 }
